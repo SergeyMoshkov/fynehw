@@ -1,41 +1,45 @@
 package main
 
 import (
-	"fmt"
-
 	"fyne.io/fyne/v2/app"
 	"fyne.io/fyne/v2/container"
-	"fyne.io/fyne/v2/layout"
 	"fyne.io/fyne/v2/widget"
 )
 
-func main() {
-	a := app.New()
-	w := a.NewWindow("Привет, мир!")
-
-	content := container.New(layout.NewVBoxLayout(),
-		widget.NewLabel("Пример текста"),
-		widget.NewButton("Нажми меня", func() {
-			fmt.Println("Кнопка нажата")
-		}),
-
-		widget.NewButton("Закрыть", func() {
-			w.Close()
-		}),
-		
-		widget.NewAccordion(
-			widget.NewAccordionItem("Как сам?", widget.NewLabel("1")),
-			widget.NewAccordionItem("Все хорошо!", widget.NewLabel("2")),
-			widget.NewAccordionItem("Могло быть и лучше!", widget.NewLabel("3")),
-		),
-	)
-
-	w.SetContent(content)
-	w.ShowAndRun()
-
-	tidy()
+type App struct {
+	output *widget.Label
 }
 
-func tidy() {
-	fmt.Println("Tidy up")
+var myApp App
+
+func main() {
+	// Create a new app instance
+	app := app.New()
+
+	// Create a new window with a greeting message
+	window := app.NewWindow("Наша первая программа!")
+
+	// Create the UI components
+	output, entry, btnText := myApp.makeUI()
+
+	// Set the content of the window to a vertical box containing the UI components
+	window.SetContent(container.NewVBox(output, entry, btnText))
+
+	// Show the window and start the application event loop
+	window.ShowAndRun()
+}
+
+// makeUI creates and initializes the UI components.
+// It returns the output label, entry field, and button.
+func (app *App) makeUI() (*widget.Label, *widget.Entry, *widget.Button) {
+	output := widget.NewLabel("Привет, мир!") // create output label with initial text
+	entry := widget.NewEntry() // create entry field
+	btnText := widget.NewButton("Click me!", func() { // create button with click event handler
+		app.output.SetText(entry.Text) // set the output label text to the entry field text
+	})
+	
+
+	app.output = output // assign the output label to the app's output field
+
+	return output, entry, btnText // return the UI components
 }
